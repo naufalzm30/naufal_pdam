@@ -54,6 +54,14 @@ class StationModel(models.Model):
 
     balai = models.ForeignKey(BalaiModel, on_delete=models.CASCADE, default=1) 
 
+    nameplate_head = models.CharField(max_length=100, null=True)
+    sum_operation = models.CharField(max_length=100, null=True)
+    capacity = models.CharField(max_length=100, null=True)
+    interzone = models.CharField(max_length=100, null=True)
+    max_flow = models.CharField(max_length=100, null=True)
+    pipe_diameter = models.CharField(max_length=100, null=True)
+
+
     def __str__(self):
         return self.topic
     
@@ -191,7 +199,7 @@ class SensorDataModel(models.Model):
     status = models.IntegerField(null=True)
 
     class Meta:
-        unique_together = ('station', 'time')
+        unique_together = ('station', 'time',"status")
         db_table = 'pdam_sensor_data'
 
 
@@ -336,7 +344,7 @@ class SensorDataReqModel(models.Model):
     status = models.PositiveIntegerField()
 
     class Meta:
-        unique_together = ("station","time","sensor_type","channel","data")
+        unique_together = ("station","time","sensor_type","channel","data","status")
         db_table = "pdam_sensor_data_req"
 
 

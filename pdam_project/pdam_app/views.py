@@ -208,7 +208,14 @@ class PDAMDashboardView(APIView):
                         "icon": request.build_absolute_uri(settings.MEDIA_URL + sensor_mapping[name]["sensor_icon"])
                     }
                     for name, field in zip(["battery", "temperature", "Flow Meter", "Totalizer"], ["battery", "temperature", "modCH5", "modCH6"])
-                ]
+                ],
+                "location":station.location,
+                "nameplate_head" : station.nameplate_head,
+                "sum_operation" : station.sum_operation,
+                "capacity" : station.capacity,
+                "interzone" : station.interzone,
+                "max_flow" : station.max_flow,
+                "pipe_diameter" : station.pipe_diameter
             })
 
         return Response({"message": "success", "data": responses})
@@ -1004,6 +1011,13 @@ class DataStationView(APIView):
                         "value": sensor_data.temperature,
                         "notation": sensor_type_dict.get("Temperature", "°C"),
                         "icon": None
+                    },
+                    {
+                        "sensor_name": "Taksasi 1",
+                        "channel": None,
+                        "value": sensor_data.modCH5,
+                        "notation": sensor_type_dict.get("Flow Meter", "m³"),
+                        "icon": None
                     }
                 ]
             })
@@ -1023,6 +1037,11 @@ class DataStationView(APIView):
         # Count total Flow Meter data points
         total_data = len(flow_meter_values)
 
+        sum_volume = 0
+        for data in chart_data:
+            sum_volume+=data["sensor_data"][1]["value"]
+
+
         response_data = {
             "id": station.id,
             "station_name": station.station_name,
@@ -1040,6 +1059,10 @@ class DataStationView(APIView):
             "latitude": station.latitude,
             "average_flow":average_flow,
             "total_data":total_data,
+            
+            "data_precentage": (len(chart_data)/288*100),
+           
+            "sum_volume":sum_volume,
             "chart": chart_data
         }
 
